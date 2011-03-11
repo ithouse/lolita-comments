@@ -7,7 +7,7 @@ module LolitaComments
       hook_for :orm
       
       def copy_migrations
-        copy_dir(File.join("db","migrate"),:root=>@@root) if orm==:active_record
+        copy_dir(File.join("db","migrate"),:root=>@@root) #if orm==:active_record
       end
       
       private
