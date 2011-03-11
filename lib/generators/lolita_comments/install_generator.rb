@@ -1,6 +1,7 @@
+require 'rails/generators/active_record'
 module LolitaComments
   module Generators
-    class InstallGenerator < Rails::Generators::Base
+    class InstallGenerator < ActiveRecord::Generators::Base
 
       @@root=File.expand_path("#{__FILE__}/../../../..")
       
