@@ -1,4 +1,4 @@
-class CreateComments < ActiveRecord::Migration
+class CreateLolitaComments < ActiveRecord::Migration
   def self.up
     create_table :comments,:force=>true do |t|
       t.string  :commentable_type
