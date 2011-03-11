@@ -1,0 +1,12 @@
+<div class="comment-list" id="comment_list_<%=commentable_id(commentable)%>">
+  <% comments_with_level(commentable,local_assigns[:limit] ? limit : nil) do |comment,level| %>
+    <%= render :partial=>"comments/comment",:locals=>{:comment=>comment,:level=>level} %>
+  <% end  %>
+  <div class="actions">
+    <%= render :partial=>"comments/show_all", :locals=>{:commentable=>commentable} if Comment.comment_count_for(commentable)>(local_assigns[:limit] ? limit : 1) %>
+    <% if can?(:create,Comment.new,commentable_object(commentable)) %>
+      <%= link_to t(".write"), commentable_path(commentable,:action=>"new"),:remote=>true %>
+    <% end %>
+  </div>
+  <div class="clear"></div>
+</div>

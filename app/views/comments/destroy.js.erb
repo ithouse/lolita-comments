@@ -1,0 +1,6 @@
+<% @ids.each do |id| %>
+  $("#comment-container-<%= id -%>").remove();
+<% end %>
+$("#show_all_comments_for_<%=commentable_id(@commentable)%>").remove()
+$("#comment_list_<%=commentable_id(@commentable)%> .actions").prepend("<%=escape_javascript(render :partial=>"show_all",:locals=>{:commentable=>commentable_object(@commentable)})%>")
+format_comments()

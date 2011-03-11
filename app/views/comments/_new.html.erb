@@ -1,0 +1,31 @@
+<% if can?(:create,Comment,commentable_object(commentable))  %>
+  <% comment.email = current_user.email if user_signed_in? %>
+  <div class="comment-form" id="comment_for_<%=commentable_id(commentable)%>">
+    <div class="label"><%= smart_commentable_title(commentable) %>:</div>
+    <div class="form">
+      <%= render :partial=>"shared/error_messages", :locals=>{:target=>comment} %>
+      <%= form_for [commentable,comment],:remote=>true do |f| %>
+        <div class="left">
+          <%= f.label "#{t(".name")}:" %>
+          <%= f.text_field :commentator_name %>
+          <%= f.label "#{t(".email")}:" %>
+          <%= f.text_field :email %>
+          <% unless user_signed_in? %>
+            <%= render :partial=>"shared/captcha" %>
+          <% end %>
+        </div>
+        <div class="right">
+          <%= f.label "#{t(".comment")}:" %>
+          <%= f.text_area :body %>
+        </div>
+        <div class="clear"></div>
+        <div class="buttons">
+          <%= link_to t("Cancel"),"#",:onclick=>"$('#comment_for_#{commentable_id(commentable)}').remove();return false;" %>
+          <%= f.submit t(".post")%>
+        </div>
+        <div class="clear"></div>
+      <% end %>
+    </div>
+    <div class="clear"></div>
+  </div>
+<% end %>
