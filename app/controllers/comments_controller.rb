@@ -29,7 +29,7 @@ class CommentsController < ApplicationController
       @comment.commentator=current_user if user_signed_in?
       @comment.commentable=@commentable
       if ((!user_signed_in? && verify_recaptcha(:model => @comment,:timeout=>5)) || user_signed_in?) && @comment.save
-        flash.now[:notice] = 'Successfully created comment'.t
+        flash.now[:notice] = I18n.t('Successfully created comment')
       end
       respond_with @comment do |format|
         format.js do
@@ -72,4 +72,54 @@ class CommentsController < ApplicationController
     id=parts.last.to_i
     @commentable=class_name.constantize.find(id)
   end
+
+  def verify_recaptcha(options = {})
+    if !options.is_a? Hash
+      options = {:model => options}
+    end
+
+    env = options[:env] || ENV['RAILS_ENV']
+    #return true if Recaptcha.configuration.skip_verify_env.include? env
+    model = options[:model]
+    attribute = options[:attribute] || :base
+    private_key = options[:private_key] || Recaptcha.private_key
+    raise ArgumentError, "No private key specified." unless private_key
+
+    begin
+      recaptcha = nil
+      unless params[:recaptcha_challenge_field].strip.blank?
+        Timeout::timeout(options[:timeout] || 3) do
+          recaptcha = Net::HTTP.post_form URI.parse(Recaptcha.verify_url), {
+            "privatekey" => private_key,
+            "remoteip"   => request.remote_ip,
+            "challenge"  => params[:recaptcha_challenge_field],
+            "response"   => params[:recaptcha_response_field]
+          }
+        end
+        answer, error = recaptcha.body.split.map { |s| s.chomp }
+      else
+        answer=nil
+      end
+      unless answer == 'true'
+        flash[:recaptcha_error] = error
+        if model
+          model.valid?
+          model.errors.add attribute, options[:message] || "Word verification response is incorrect, please try again."
+        end
+        return false
+      else
+        flash[:recaptcha_error] = nil
+        return true
+      end
+    rescue Timeout::Error
+      flash[:recaptcha_error] = "recaptcha-not-reachable"
+      if model
+        model.valid?
+        model.errors.add attribute, options[:message] || "Oops, we failed to validate your word verification response. Please try again."
+      end
+      return false
+    rescue Exception => e
+      raise ArgumentError, e.message, e.backtrace
+    end
+  end # verify_recaptcha
 end

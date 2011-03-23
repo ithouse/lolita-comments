@@ -2,16 +2,18 @@
   <div class="wrapper">
     <div class="text">
       <div class="head">
-        <span class="commenter"><%= comment.commentator_name %></span> / <span class="date"><%=t(".created",:time=>I18n.l(comment.created_at, :format => :long))%></span>
+        <span class="commenter"><%= comment.commentator_name %></span>
+        <span class="date"><%=t(".created",:time=>I18n.l(comment.created_at, :format => :long))%></span>
         <% if can?(:destroy, comment) %>
           <span class="delete"><%=link_to image_tag("delete.jpg",:alt=>"Delete".t),commentable_path(comment),:method=>:delete,:confirm=>t("Are you sure?"),:remote=>true %></span>
         <% end %>
       </div>
-      <p>
-        <span id="comment-body-<%=comment.id%>"><%= comment.body.to_s.slice(0...100) %><%=comment.body.size>100 ? "..." : ""%></span>
-        <%= link_to t(".read_more"), "#",:onclick=>"$(#comment-body-#{comment.id}).html('#{escape_javascript(comment.body)}')" if comment.body.size>100 %>
+      <div class="comment-body" id="comment-body-<%=comment.id%>">
+        <p>
+          <%= comment.body %>
+        </p>
         <%= link_to t(".reply"),reply_comment_comments_path(comment),:remote=>true if can?(:reply,comment,commentable_object(comment.commentable)) %>
-      </p>
+      </div>
     </div>
   </div>
 </div>

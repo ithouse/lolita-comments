@@ -13,7 +13,6 @@ class Comment < ActiveRecord::Base
   
   after_create :reply_if_needed
   after_create :move_in_tree
-  after_save :update_answer_tags # NB! remove from plugin specific to project
 
   delegate :project, :to=>:commentable
   
@@ -45,11 +44,12 @@ class Comment < ActiveRecord::Base
   # Return comment count for commentable object.
   # When commentable object has counter column that there is no need for
   # selection from DB. Otherwise find look in reflections for comment reflections
+
   def self.comment_count_for(commentable)
     if counter_column=self.counter_column_for(commentable)
       commentable.send(counter_column.to_sym)
     else
-      if reflection=commentable.class.reflections.detect{|name,r| r.klass==self.class}
+      if reflection=commentable.class.reflections.detect{|name,r| r.klass==self}
         commentable.send(reflection.first).count
       else
         raise ArgumentError, "Don't know how to get comment count for #{commentable.class}"
@@ -70,7 +70,7 @@ class Comment < ActiveRecord::Base
       last=self.class.by_commentable(commentable).order("created_at desc").first
       if last && last.id!=self.id
         self.move_to_right_of(last)
-      else
+      else       
         self.move_to_root
       end
     end
@@ -109,15 +109,5 @@ class Comment < ActiveRecord::Base
 
   def strip_html
     self.body.to_s.gsub!(/<\/?.*?>/, "")
-  end
-  
-  def update_answer_tags #TODO remove from plugin
-    real_commentable=self.class.real_commentable(commentable)
-    if real_commentable.is_a?(Answer)
-      old_tags=real_commentable.tag_list
-      new_tags=old_tags+(ActsAsTaggableOn::Tag.tags_from(self.body,:project=>real_commentable.project)-old_tags)
-      real_commentable.tag_list=new_tags
-      real_commentable.save
-    end
   end
 end

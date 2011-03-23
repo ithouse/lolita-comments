@@ -1,2 +1,1 @@
-$("#comment_list_<%=commentable_id(@commentable)%>").replaceWith("<%= escape_javascript(render :partial => 'comments',:locals=>{:commentable=>@commentable,:limit=>@commentable.comment_count}) %>");
-format_comments()
+$("#comment_list_<%commentable_id(@commentable)%>").replaceWith("<%= escape_javascript(render :partial => 'comments/comments',:locals=>{:commentable=>@commentable,:limit=>@commentable.comment_count}) %>");
