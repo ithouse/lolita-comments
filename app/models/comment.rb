@@ -1,4 +1,5 @@
 class Comment < ActiveRecord::Base
+  
   include CollectiveIdea::Acts::NestedSet
 
   attr_accessor :moved
