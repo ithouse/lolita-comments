@@ -1,4 +1,4 @@
-<div class="comment-list" id="comment_list_<%=commentable_id(commentable)%>">
+<div class="comment-list" id="comment_list_<%= commentable_id(commentable)%>">
   <% comments_with_level(commentable,local_assigns[:limit] ? limit : nil) do |comment,level| %>
     <%= render :partial=>"comments/comment",:locals=>{:comment=>comment,:level=>level} %>
   <% end  %>

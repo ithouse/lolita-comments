@@ -1,9 +1,8 @@
 <% if @comment.commentable_type!="Comment" %>
-  $('#comment_list_<%=commentable_id(@commentable)%>').prepend("<%= escape_javascript(render :partial=>"comment", :locals=>{:comment=>@comment,:level=>@comment.level}) %>");
+  $('#comment_list_<%=commentable_id(@commentable)%>').prepend("<%= escape_javascript(render :partial=>"comments/comment", :locals=>{:comment=>@comment,:level=>@comment.level}) %>");
 <% else %>
-  $('#comment-container-<%=@comment.commentable_id%>').after("<%= escape_javascript(render :partial=>"comment", :locals=>{:comment=>@comment,:level=>@comment.level}) %>");
+  $('#comment-container-<%=@comment.commentable_id%>').after("<%= escape_javascript(render :partial=>"comments/comment", :locals=>{:comment=>@comment,:level=>@comment.level}) %>");
 <% end %>
-$('#comment_for_<%=commentable_id(@commentable)%>').replaceWith("<%= escape_javascript(render :partial => 'new',:locals=>{:commentable=>@commentable,:comment=>Comment.new}) %>");
+$('#comment_for_<%=commentable_id(@commentable)%>').replaceWith("<%= escape_javascript(render :partial => 'comments/new',:locals=>{:commentable=>@commentable,:comment=>Comment.new}) %>");
 $("#show_all_comments_for_<%=commentable_id(@commentable)%>").remove()
-$("#comment_list_<%=commentable_id(@commentable)%> .actions").prepend("<%=escape_javascript(render :partial=>"show_all",:locals=>{:commentable=>commentable_object(@commentable)})%>")
-format_comments()
+$("#comment_list_<%=commentable_id(@commentable)%> .actions").prepend("<%=escape_javascript(render :partial=>"comments/show_all",:locals=>{:commentable=>commentable_object(@commentable)})%>")

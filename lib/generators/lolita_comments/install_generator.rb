@@ -20,6 +20,24 @@ module LolitaComments
         end
       end
 
+      def copy_recaptcha_config
+        exist=Dir.new(File.join(Rails.root,"config","initializers")).detect{|f|
+          f.match(/\recaptcha\.rb/)
+        }
+        if exist
+          print "Recaptcha config already exists! Replace? [Yn] "
+          do_copy=gets
+          do_copy=do_copy=="Y" || do_copy=="y" ? true : false
+        else
+          do_copy=true
+        end
+        template "recaptcha.rb", "config/initializers/recaptcha.rb" if do_copy
+      end
+
+      def copy_app_files
+        directory File.join(File.dirname(__FILE__),"../../../app"), "app"
+      end
+
     end
   end
 end

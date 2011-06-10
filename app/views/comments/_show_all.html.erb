@@ -1,1 +1,1 @@
-<%= link_to t(".show_all",:count=>commentable.comment_count), commentable_path(commentable),:remote=>true,:id=>"show_all_comments_for_#{commentable_id(commentable)}" if commentable.comment_count>1 %>
+<%= link_to t(".show_all",:count=>Comment.comment_count_for(commentable)), commentable_path(commentable),:remote=>true,:id=>"show_all_comments_for_#{commentable_id(commentable)}" if Comment.comment_count_for(commentable)>1 %>
