@@ -13,10 +13,7 @@ class Comment < ActiveRecord::Base
   
   after_create :reply_if_needed
   after_create :move_in_tree
-  after_save :update_answer_tags # NB! remove from plugin specific to project
-
-  delegate :project, :to=>:commentable
-  
+   
   scope :by_commentable,lambda{|object|
     where(:commentable_type=>object.class.to_s, :commentable_id=>object.id)
   }
@@ -111,13 +108,4 @@ class Comment < ActiveRecord::Base
     self.body.to_s.gsub!(/<\/?.*?>/, "")
   end
   
-  def update_answer_tags #TODO remove from plugin
-    real_commentable=self.class.real_commentable(commentable)
-    if real_commentable.is_a?(Answer)
-      old_tags=real_commentable.tag_list
-      new_tags=old_tags+(ActsAsTaggableOn::Tag.tags_from(self.body,:project=>real_commentable.project)-old_tags)
-      real_commentable.tag_list=new_tags
-      real_commentable.save
-    end
-  end
 end
